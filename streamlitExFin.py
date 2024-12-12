@@ -17,9 +17,9 @@ st.set_page_config(
 
 
 
-finEI_df = pd.read_excel(r'./data_base\finEI_stream.xlsx',sheet_name='finEI_simple')
-onlyBase_df = pd.read_excel(r'data_base\finEI_stream.xlsx',sheet_name='onlyBaseEdges')
-basePlus_df = pd.read_excel(r'data_base\finEI_stream.xlsx',sheet_name='basePlusEdges')
+finEI_df = pd.read_excel(r'data_base//finEI_stream.xlsx',sheet_name='finEI_simple')
+onlyBase_df = pd.read_excel(r'data_base//finEI_stream.xlsx',sheet_name='onlyBaseEdges')
+basePlus_df = pd.read_excel(r'data_base//finEI_stream.xlsx',sheet_name='basePlusEdges')
 
 
 
