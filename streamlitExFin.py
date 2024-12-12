@@ -49,7 +49,7 @@ baseMK_Dict = finEI_df.set_index(finEI_df.website_main.str.lower())['regionFI'].
 loc_colors = ['black', 'blue', 'green', 'orange', 'purple', 'yellow', 'cyan', 'magenta', 
           'lime', 'pink', 'teal', 'lavender', 'brown', 'beige', 'maroon', 'olive', 
           'coral', 'navy', 'aquamarine','indigo']  # red, black 
-
+loc_colors = list(set(loc_colors))
 color_map = dict(zip(region_names,loc_colors)) 
 
 for node in G.nodes:
