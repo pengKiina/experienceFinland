@@ -73,7 +73,7 @@ for node in G.nodes:
 selectNodes0 = st.multiselect(
     'Select multiple multiple nodes:',
     options= ['all_nodes'] + list(G.nodes) ,
-    default= 'all_nodes',
+    default= 'businessfinland.fi',
     
 )
 
@@ -95,12 +95,12 @@ if 'all_regions' in selectRegions:
     selectRegions = region_names
 #print('selectRegions',selectRegions) 
 
-min_weight = st.selectbox('select minimum edge weight',range(1,100),index=10)
+min_weight = st.selectbox('select minimum edge weight',range(1,100),index=2)
    
 G2 = G.copy()
 
 heading = 'Finland Experience Network'
-nt1 = Network("1080px", "1920px", heading=heading, notebook=True,directed= True, cdn_resources='remote',filter_menu=True) # Set notebook=False if not in Jupyter
+nt1 = Network("1080px", "1920px", heading=heading, notebook=True,directed= True, cdn_resources='remote',filter_menu=False) # Set notebook=False if not in Jupyter
 #min_sector_weight = 4
 filtered_edges = [(u, v) for u, v, d in G2.edges(data=True) if (d['width'] >= min_weight) & (G2.nodes[u]['attribute_loc'] in selectRegions) &(u in selectNodes or v in selectNodes)]
 
