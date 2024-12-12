@@ -16,7 +16,7 @@ st.set_page_config(
 
 
 
-fiEI_df = pd.read_excle('https://github.com/pengKiina/experienceFinland/blob/main/data_base/finEI_stream.xlsx',sheet_name = 'finEI_simple')
+fiEI_df = pd.read_excel('https://github.com/pengKiina/experienceFinland/blob/main/data_base/finEI_stream.xlsx',sheet_name = 'finEI_simple')
 finEI_df = pd.read_excel(r'data_base\finEI_stream.xlsx',sheet_name='finEI_simple')
 onlyBase_df = pd.read_excel(r'data_base\finEI_stream.xlsx',sheet_name='onlyBaseEdges')
 basePlus_df = pd.read_excel(r'data_base\finEI_stream.xlsx',sheet_name='basePlusEdges')
