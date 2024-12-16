@@ -3,7 +3,7 @@ import networkx as nx
 import pandas as pd
 from pyvis.network import Network
 import time  # For performance monitoring
-import math
+
 # Set the page configuration
 st.set_page_config(
     layout="wide",  # Wide layout
@@ -18,9 +18,9 @@ start_time = time.time()
 def load_data(file_path, sheet_name):
     return pd.read_excel(file_path, sheet_name=sheet_name)
 
-finEI_df = load_data(r'data_base\finEI_stream.xlsx', 'finEI_simple')
-onlyBase_df = load_data(r'data_base\finEI_stream.xlsx', 'onlyBaseEdges')
-basePlus_df = load_data(r'data_base\finEI_stream.xlsx', 'basePlusEdges')
+finEI_df = load_data(r'data_base//finEI_stream.xlsx', 'finEI_simple')
+onlyBase_df = load_data(r'data_base//finEI_stream.xlsx', 'onlyBaseEdges')
+basePlus_df = load_data(r'data_base//finEI_stream.xlsx', 'basePlusEdges')
 
 # Cache graph construction
 @st.cache_data
@@ -53,46 +53,28 @@ G,region_names,baseMK_Dict,color_map = create_graph(finEI_df,onlyBase_df)
 
 # Sidebar selections
 with st.sidebar:
-    min_weight = st.slider('Minimum edge weight:', min_value=1, max_value=100, value=9)
+    min_weight = st.slider('Minimum Edge Weight:', min_value=1, max_value=100, value=5)
+
+    selectRegions = st.multiselect(
+        'Select Regions:',
+        options=['all_regions'] + region_names,
+        default='all_regions',
+    )
+    selectRegions = region_names if 'all_regions' in selectRegions else selectRegions
+    
     selectNodes0 = st.multiselect(
-        'Select multiple nodes:',
+        'Select Nodes:',
         options=['all_nodes'] + list(G.nodes),
         default='businessfinland.fi',
     )
     selectNodes = list(G.nodes) if 'all_nodes' in selectNodes0 else selectNodes0
 
-    selectRegions = st.multiselect(
-        'Select multiple regions:',
-        options=['all_regions'] + region_names,
-        default='all_regions',
-    )
-    selectRegions = region_names if 'all_regions' in selectRegions else selectRegions
-
    
-@st.cache_data
+@st.cache_resource
 def create_subGraph(filtered_edges):
     
     filtered_G = nx.DiGraph()
     filtered_G.add_weighted_edges_from(filtered_edges, weight='width')
-    return filtered_G
-
-
-@st.cache_data
-def showFiltered(min_weight,selectRegions,selectNodes):
-    
-    
-    # Filter the graph
-    filtered_edges = [
-        (u, v,d) for u, v, d in G.edges(data=True)
-        if d['width'] >= min_weight and 
-        G.nodes[u]['attribute_loc'] in selectRegions and 
-        (u in selectNodes or v in selectNodes)
-        ]
-    
-    #filtered_G = G.edge_subgraph(filtered_edges) # can inherit the G nodes and edges attributes such as size. 
-    
-    filtered_G = create_subGraph(filtered_edges)  # all nodes and edges attribtues are updaged in the filtered_G 
-    
     
     for node in filtered_G.nodes:
         try:
@@ -113,11 +95,25 @@ def showFiltered(min_weight,selectRegions,selectNodes):
             filtered_G.edges[u,v]['title'] = u +' → ' + v +':' + str(data['width'])
         except:
             pass
+        
+    return filtered_G
+
+
+@st.cache_data
+def showFiltered(min_weight,selectRegions,selectNodes):
     
     
+    # Filter the graph
+    filtered_edges = [
+        (u, v,d) for u, v, d in G.edges(data=True)
+        if d['width'] >= min_weight and 
+        G.nodes[u]['attribute_loc'] in selectRegions and 
+        (u in selectNodes or v in selectNodes)
+        ]
     
+    #filtered_G = G.edge_subgraph(filtered_edges) # can inherit the G nodes and edges attributes such as size. 
     
-    
+    filtered_G = create_subGraph(filtered_edges)  # all nodes and edges attribtues are updaged in the filtered_G 
     
     
     # Create the Pyvis network
@@ -128,7 +124,7 @@ def showFiltered(min_weight,selectRegions,selectNodes):
 
     # Show the network
     st.components.v1.html(nt1.generate_html(), height=800, scrolling=True)
-
+st.subheader('Finland Experience Network', divider=True)
 showFiltered(min_weight,selectRegions,selectNodes)
 
 
