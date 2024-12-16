@@ -2,3 +2,4 @@ networkx
 git+https://github.com/pengKiina/pyvis
 pandas
 openpyxl
+streamlit
