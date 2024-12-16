@@ -10,6 +10,23 @@ st.set_page_config(
     page_title="Finland Experience Industry / VTT-UEF"  # Page title
 )
 
+st.markdown(
+    """
+    <style>
+        @media (max-width: 600px) {
+            .streamlit-expanderHeader {
+                font-size: 18px;
+            }
+            .stApp {
+                overflow-x: hidden;
+            }
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 # Monitor performance
 start_time = time.time()
 
