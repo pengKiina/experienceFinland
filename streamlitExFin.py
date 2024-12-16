@@ -18,9 +18,9 @@ start_time = time.time()
 def load_data(file_path, sheet_name):
     return pd.read_excel(file_path, sheet_name=sheet_name)
 
-finEI_df = load_data(r'data_base\finEI_stream.xlsx', 'finEI_simple')
-onlyBase_df = load_data(r'data_base\finEI_stream.xlsx', 'onlyBaseEdges')
-basePlus_df = load_data(r'data_base\finEI_stream.xlsx', 'basePlusEdges')
+finEI_df = load_data(r'data_base//finEI_stream.xlsx', 'finEI_simple')
+onlyBase_df = load_data(r'data_base//finEI_stream.xlsx', 'onlyBaseEdges')
+basePlus_df = load_data(r'data_base//finEI_stream.xlsx', 'basePlusEdges')
 
 # Cache graph construction
 @st.cache_data
