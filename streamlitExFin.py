@@ -3,7 +3,7 @@ import networkx as nx
 import pandas as pd
 from pyvis.network import Network
 import time  # For performance monitoring
-
+import math
 # Set the page configuration
 st.set_page_config(
     layout="wide",  # Wide layout
@@ -18,9 +18,9 @@ start_time = time.time()
 def load_data(file_path, sheet_name):
     return pd.read_excel(file_path, sheet_name=sheet_name)
 
-finEI_df = load_data(r'data_base//finEI_stream.xlsx', 'finEI_simple')
-onlyBase_df = load_data(r'data_base//finEI_stream.xlsx', 'onlyBaseEdges')
-basePlus_df = load_data(r'data_base//finEI_stream.xlsx', 'basePlusEdges')
+finEI_df = load_data(r'data_base\finEI_stream.xlsx', 'finEI_simple')
+onlyBase_df = load_data(r'data_base\finEI_stream.xlsx', 'onlyBaseEdges')
+basePlus_df = load_data(r'data_base\finEI_stream.xlsx', 'basePlusEdges')
 
 # Cache graph construction
 @st.cache_data
@@ -30,7 +30,7 @@ def create_graph(finEI_df,onlyBase_df):
     G = nx.DiGraph()
     G.add_weighted_edges_from(edges, weight='width')
  
-
+    
    
 
     # Process data for regions and colors
@@ -43,30 +43,13 @@ def create_graph(finEI_df,onlyBase_df):
     print(color_map)
     # Update graph nodes with attributes
     for node in G.nodes:
-        try:
-            G.nodes[node]['attribute_loc'] = baseMK_Dict[node]
-            G.nodes[node]['color'] = color_map[G.nodes[node]['attribute_loc']]
-            G.nodes[node]['title'] = f"{node}: {G.degree(node)}: {G.nodes[node]['attribute_loc']}"
-            G.nodes[node]['size'] = G.degree(node) / 10 + 10
-        except KeyError:
-            G.nodes[node]['attribute_loc'] = '1'
-            G.nodes[node]['color'] = 'gray'
-            G.nodes[node]['title'] = f"{node}: {G.degree(node)}"
-            G.nodes[node]['size'] = G.degree(node) / 10 + 10
-            
-        # Add nodes and edges with attributes
-    for u, v, data in G.edges(data=True):
-        #label = f"Weight: {data['width']}"
-        try:
-            G.edges[u,v]['title'] = u +' → ' + v +':' + str(data['width'])
-        except:
-            pass
+        G.nodes[node]['attribute_loc'] = baseMK_Dict[node]
 
                 
-    return G,region_names
+    return G,region_names,baseMK_Dict,color_map
 
 
-G,region_names = create_graph(finEI_df,onlyBase_df)
+G,region_names,baseMK_Dict,color_map = create_graph(finEI_df,onlyBase_df)
 
 # Sidebar selections
 with st.sidebar:
@@ -86,23 +69,57 @@ with st.sidebar:
     selectRegions = region_names if 'all_regions' in selectRegions else selectRegions
 
    
+@st.cache_data
+def create_subGraph(filtered_edges):
+    
+    filtered_G = nx.DiGraph()
+    filtered_G.add_weighted_edges_from(filtered_edges, weight='width')
+    return filtered_G
 
 
-
-@st.cache_resource
+@st.cache_data
 def showFiltered(min_weight,selectRegions,selectNodes):
     
     
     # Filter the graph
     filtered_edges = [
-        (u, v) for u, v, d in G.edges(data=True)
+        (u, v,d) for u, v, d in G.edges(data=True)
         if d['width'] >= min_weight and 
         G.nodes[u]['attribute_loc'] in selectRegions and 
         (u in selectNodes or v in selectNodes)
         ]
     
-    filtered_G = G.edge_subgraph(filtered_edges)
-
+    #filtered_G = G.edge_subgraph(filtered_edges) # can inherit the G nodes and edges attributes such as size. 
+    
+    filtered_G = create_subGraph(filtered_edges)  # all nodes and edges attribtues are updaged in the filtered_G 
+    
+    
+    for node in filtered_G.nodes:
+        try:
+            filtered_G.nodes[node]['attribute_loc'] = baseMK_Dict[node]
+            filtered_G.nodes[node]['color'] = color_map[filtered_G.nodes[node]['attribute_loc']]
+            filtered_G.nodes[node]['title'] = f"{node}: {filtered_G.degree(node)}: {filtered_G.nodes[node]['attribute_loc']}"
+            filtered_G.nodes[node]['size'] = filtered_G.degree(node) / 5 + 5
+        except KeyError:
+            filtered_G.nodes[node]['attribute_loc'] = '1'
+            filtered_G.nodes[node]['color'] = 'gray'
+            filtered_G.nodes[node]['title'] = f"{node}: {filtered_G.degree(node)}"
+            filtered_G.nodes[node]['size'] = filtered_G.degree(node) / 5 + 5
+            
+        # Add nodes and edges with attributes
+    for u, v, data in filtered_G.edges(data=True):
+        #label = f"Weight: {data['width']}"
+        try:
+            filtered_G.edges[u,v]['title'] = u +' → ' + v +':' + str(data['width'])
+        except:
+            pass
+    
+    
+    
+    
+    
+    
+    
     # Create the Pyvis network
     heading = 'Finland Experience Network'
     nt1 = Network("800px", "110%", heading=heading, notebook=True, directed=True, cdn_resources='remote')
