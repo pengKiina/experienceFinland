@@ -13,18 +13,31 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-        @media (max-width: 600px) {
-            .streamlit-expanderHeader {
-                font-size: 18px;
-            }
-            .stApp {
-                overflow-x: hidden;
-            }
+        /* Style for the scrollbar of the pyvis network graph */
+        .pyvis-network {
+            overflow: auto;
+            scrollbar-width: thin; /* For Firefox */
+            scrollbar-color: #888 #f1f1f1; /* For Firefox */
+        }
+        
+        /* Webkit-based browsers (Chrome, Safari, etc.) */
+        .pyvis-network::-webkit-scrollbar {
+            width: 12px;  /* Increase the width of the scrollbar */
+        }
+        
+        .pyvis-network::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 10px;
+        }
+        
+        .pyvis-network::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
         }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 
 # Monitor performance
