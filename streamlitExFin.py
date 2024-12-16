@@ -118,7 +118,7 @@ def showFiltered(min_weight,selectRegions,selectNodes):
     
     # Create the Pyvis network
     heading = 'Finland Experience Network'
-    nt1 = Network("800px", "110%", heading=heading, notebook=True, directed=True, cdn_resources='remote')
+    nt1 = Network("800px", "110%", notebook=True, directed=True, cdn_resources='remote')
     nt1.from_nx(filtered_G)
     nt1.show_buttons(filter_=['physics'])
 
