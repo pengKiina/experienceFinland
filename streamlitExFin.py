@@ -163,7 +163,26 @@ with open(spider_file_path, "r") as file:
     html_content = file.read()
 
 # Use st.components.v1.html to render the HTML
-st.components.v1.html(html_content, height=800)
+#st.components.v1.html(html_content, height=800)
+
+# Set viewport height to 100% for full-screen rendering (consider responsiveness)
+html_viewport_style = """
+<style>
+  html, body {
+    height: 100vh;
+    margin: 0;
+  }
+</style>
+"""
+
+# Combine the viewport style with your HTML content
+full_html = html_viewport_style + html_content
+
+# Optionally adjust height for specific content or user interactions
+adjusted_height = 734 # Set a specific pixel value if needed
+
+# Render the HTML using st.components.v1.html
+st.components.v1.html(full_html, height=adjusted_height)
 
 
 # Display execution time
