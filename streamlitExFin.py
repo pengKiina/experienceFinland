@@ -4,11 +4,26 @@ import pandas as pd
 from pyvis.network import Network
 import time  # For performance monitoring
 import math
+
+# Inject custom JavaScript to hide the sidebar initially
+#st.set_page_config(initial_sidebar_state="collapsed")
 # Set the page configuration
 st.set_page_config(
     layout="wide",  # Wide layout
     page_title="Finland Experience Industry / VTT-UEF"  # Page title
 )
+
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebar"] {
+            display: none;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 # Monitor performance
 start_time = time.time()
@@ -18,9 +33,9 @@ start_time = time.time()
 def load_data(file_path, sheet_name):
     return pd.read_excel(file_path, sheet_name=sheet_name)
 
-finEI_df = load_data(r'data_base//finEI_stream.xlsx', 'finEI_simple')
-onlyBase_df = load_data(r'data_base//finEI_stream.xlsx', 'onlyBaseEdges')
-basePlus_df = load_data(r'data_base//finEI_stream.xlsx', 'basePlusEdges')
+finEI_df = load_data(r'data_base\finEI_stream.xlsx', 'finEI_simple')
+onlyBase_df = load_data(r'data_base\finEI_stream.xlsx', 'onlyBaseEdges')
+basePlus_df = load_data(r'data_base\finEI_stream.xlsx', 'basePlusEdges')
 
 # Cache graph construction
 @st.cache_data
@@ -50,7 +65,7 @@ def create_graph(finEI_df,onlyBase_df):
 
 
 G,region_names,baseMK_Dict,color_map = create_graph(finEI_df,onlyBase_df)
-
+st.subheader('Finland Experience Network', divider=True)
 # Sidebar selections
 with st.sidebar:
     min_weight = st.slider('Minimum Edge Weight:', min_value=1, max_value=100, value=5)
@@ -124,7 +139,7 @@ def showFiltered(min_weight,selectRegions,selectNodes):
 
     # Show the network
     st.components.v1.html(nt1.generate_html(), height=800, scrolling=True)
-st.subheader('Finland Experience Network', divider=True)
+
 showFiltered(min_weight,selectRegions,selectNodes)
 
 
@@ -141,14 +156,14 @@ if st.button("Load Power BI Dashboard"):
     st.components.v1.html(powerBi, height=1080)
 
 
-spider_file_path = r"data_base//FinEX spider_updated.html"
+spider_file_path = "data_base//FinEX_spider_updated.html"
 
 # Read the content of the HTML file
 with open(spider_file_path, "r") as file:
     html_content = file.read()
 
 # Use st.components.v1.html to render the HTML
-st.components.v1.html(html_content, height=600)
+st.components.v1.html(html_content, height=1080)
 
 
 # Display execution time
