@@ -141,7 +141,7 @@ if st.button("Load Power BI Dashboard"):
     st.components.v1.html(powerBi, height=1080)
 
 
-spider_file_path = "//data_base//FinEX spider_updated.html"
+spider_file_path = r"data_base//FinEX spider_updated.html"
 
 # Read the content of the HTML file
 with open(spider_file_path, "r") as file:
