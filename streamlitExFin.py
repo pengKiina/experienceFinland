@@ -16,8 +16,6 @@ st.set_page_config(
 if "sidebar_state" not in st.session_state:
     st.session_state.sidebar_state = "collapsed"  # Initial state: expanded
 
-if st.button("Toggle Sidebar"):
-    st.session_state.sidebar_state = "collapsed" if st.session_state.sidebar_state == "expanded" else "expanded"
 
 if st.session_state.sidebar_state == "collapsed":
     st.markdown(
