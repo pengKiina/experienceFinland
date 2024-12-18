@@ -13,16 +13,37 @@ st.set_page_config(
     page_title="Finland Experience Industry / VTT-UEF"  # Page title
 )
 
-st.markdown(
-    """
-    <style>
-        [data-testid="stSidebar"] {
-            display: none;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+if "sidebar_state" not in st.session_state:
+    st.session_state.sidebar_state = "expanded"  # Initial state: expanded
+
+if st.button("Toggle Sidebar"):
+    st.session_state.sidebar_state = "collapsed" if st.session_state.sidebar_state == "expanded" else "expanded"
+
+if st.session_state.sidebar_state == "collapsed":
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                display: none;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                display: block; /* Or leave this out entirely as it's the default */
+            }
+            [data-testid="stAppViewContainer"] {
+                margin: 0 !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # Monitor performance
