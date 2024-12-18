@@ -3,42 +3,12 @@ import networkx as nx
 import pandas as pd
 from pyvis.network import Network
 import time  # For performance monitoring
-
+import math
 # Set the page configuration
 st.set_page_config(
     layout="wide",  # Wide layout
     page_title="Finland Experience Industry / VTT-UEF"  # Page title
 )
-
-st.markdown(
-    """
-    <style>
-        /* Style for the scrollbar of the pyvis network graph */
-        .pyvis-network {
-            overflow: auto;
-            scrollbar-width: thin; /* For Firefox */
-            scrollbar-color: #888 #f1f1f1; /* For Firefox */
-        }
-        
-        /* Webkit-based browsers (Chrome, Safari, etc.) */
-        .pyvis-network::-webkit-scrollbar {
-            width: 12px;  /* Increase the width of the scrollbar */
-        }
-        
-        .pyvis-network::-webkit-scrollbar-thumb {
-            background-color: #888;
-            border-radius: 10px;
-        }
-        
-        .pyvis-network::-webkit-scrollbar-track {
-            background-color: #f1f1f1;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
 
 # Monitor performance
 start_time = time.time()
@@ -48,9 +18,9 @@ start_time = time.time()
 def load_data(file_path, sheet_name):
     return pd.read_excel(file_path, sheet_name=sheet_name)
 
-finEI_df = load_data(r'data_base//finEI_stream.xlsx', 'finEI_simple')
-onlyBase_df = load_data(r'data_base//finEI_stream.xlsx', 'onlyBaseEdges')
-basePlus_df = load_data(r'data_base//finEI_stream.xlsx', 'basePlusEdges')
+finEI_df = load_data(r'data_base\finEI_stream.xlsx', 'finEI_simple')
+onlyBase_df = load_data(r'data_base\finEI_stream.xlsx', 'onlyBaseEdges')
+basePlus_df = load_data(r'data_base\finEI_stream.xlsx', 'basePlusEdges')
 
 # Cache graph construction
 @st.cache_data
@@ -148,7 +118,7 @@ def showFiltered(min_weight,selectRegions,selectNodes):
     
     # Create the Pyvis network
     heading = 'Finland Experience Network'
-    nt1 = Network("800px", "110%", notebook=True, directed=True, cdn_resources='remote')
+    nt1 = Network("800px", "110%", heading=heading, notebook=True, directed=True, cdn_resources='remote')
     nt1.from_nx(filtered_G)
     nt1.show_buttons(filter_=['physics'])
 
@@ -156,6 +126,9 @@ def showFiltered(min_weight,selectRegions,selectNodes):
     st.components.v1.html(nt1.generate_html(), height=800, scrolling=True)
 st.subheader('Finland Experience Network', divider=True)
 showFiltered(min_weight,selectRegions,selectNodes)
+
+
+
 
 
 # Display Power BI dashboard
@@ -166,6 +139,17 @@ if st.button("Load Power BI Dashboard"):
     src="https://app.powerbi.com/reportEmbed?reportId=a62ddc63-4447-4326-bf93-8af050c92e58&autoAuth=true&ctid=87879f2e-7304-4bf2-baf2-63e7f83f3c34" 
     frameborder="0" allowFullScreen="true"></iframe>"""
     st.components.v1.html(powerBi, height=1080)
+
+
+spider_file_path = "//data_base//FinEX spider_updated.html"
+
+# Read the content of the HTML file
+with open(spider_file_path, "r") as file:
+    html_content = file.read()
+
+# Use st.components.v1.html to render the HTML
+st.components.v1.html(html_content, height=600)
+
 
 # Display execution time
 st.write("Execution Time:", round(time.time() - start_time, 2), "seconds")
