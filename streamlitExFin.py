@@ -163,7 +163,7 @@ with open(spider_file_path, "r") as file:
     html_content = file.read()
 
 # Use st.components.v1.html to render the HTML
-st.components.v1.html(html_content, height=1080)
+st.components.v1.html(html_content, height=800)
 
 
 # Display execution time
